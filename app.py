@@ -1,24 +1,16 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-
 import plotly.express as px
 import plotly.graph_objects as go
-
 import statsmodels.api as sm
 
-# ==========================================
-# PAGE CONFIG
-# ==========================================
+# PAGE CONFIGURATION
 
 st.set_page_config(
     page_title="SDG 4 Dashboard",
     layout="wide"
 )
-
-# ==========================================
-# TITLE
-# ==========================================
 
 st.title("SDG 4: Drivers of Tertiary School Enrollment")
 
@@ -26,9 +18,7 @@ st.markdown("""
 Investigating Factors Affecting Tertiary Enrollment Across Countries
 """)
 
-# ==========================================
 # LOAD DATA
-# ==========================================
 
 @st.cache_data
 def load_data():
@@ -42,12 +32,10 @@ def load_data():
     )
 
     df = df.dropna(subset=['Year'])
-
     df['Year'] = df['Year'].astype(int)
 
     # Ensure required columns exist
     required_columns = [
-
         'Country Name',
         'Country Code',
         'Tertiary_Enrollment',
@@ -56,11 +44,9 @@ def load_data():
         'GDP_per_Capita',
         'Upper_Secondary_Completion',
         'Urban_Population'
-
     ]
 
     for col in required_columns:
-
         if col not in df.columns:
             df[col] = np.nan
 
@@ -73,9 +59,7 @@ def load_data():
 
 df = load_data()
 
-# ==========================================
 # SIDEBAR
-# ==========================================
 
 st.sidebar.header("Dashboard Controls")
 
@@ -96,7 +80,6 @@ selected_country = st.sidebar.selectbox(
 )
 
 driver_options = {
-
     'Government Expenditure (% GDP)':
         'Gov_Expenditure_Education',
 
@@ -111,7 +94,6 @@ driver_options = {
 
     'Urban Population (%)':
         'Urban_Population'
-
 }
 
 selected_driver_label = st.sidebar.selectbox(
@@ -121,17 +103,13 @@ selected_driver_label = st.sidebar.selectbox(
 
 selected_driver = driver_options[selected_driver_label]
 
-# ==========================================
 # FILTER DATA
-# ==========================================
 
 filtered_df = df[
     df['Year'] == selected_year
 ]
 
-# ==========================================
 # KPI SECTION
-# ==========================================
 
 st.subheader("Global KPI Indicators")
 
@@ -194,15 +172,9 @@ with col3:
         f"{urban:.1f}%"
     )
 
-# ==========================================
-# MAP + SCATTER
-# ==========================================
-
 map_col, scatter_col = st.columns(2)
 
-# ==========================================
 # CHOROPLETH MAP
-# ==========================================
 
 with map_col:
 
@@ -238,12 +210,9 @@ with map_col:
         use_container_width=True
     )
 
-# ==========================================
 # SCATTER PLOT
-# ==========================================
 
 with scatter_col:
-
     scatter_df = filtered_df.dropna(
         subset=[
             'Tertiary_Enrollment',
@@ -258,17 +227,11 @@ with scatter_col:
     )
 
     scatter_fig = px.scatter(
-
         scatter_df,
-
         x=selected_driver,
-
         y='Tertiary_Enrollment',
-
         hover_name='Country Name',
-
         trendline=trendline_mode,
-
         title=f"Tertiary Enrollment vs {selected_driver_label}",
 
         labels={
@@ -291,27 +254,18 @@ with scatter_col:
         ]
 
         if not c_df.empty:
-
             scatter_fig.add_trace(
-
                 go.Scatter(
-
                     x=c_df[selected_driver],
-
                     y=c_df['Tertiary_Enrollment'],
-
                     mode='markers',
-
                     marker=dict(
                         color='red',
                         size=15,
                         symbol='diamond'
                     ),
-
                     name=selected_country
-
                 )
-
             )
 
     scatter_fig.update_layout(
@@ -324,9 +278,7 @@ with scatter_col:
         use_container_width=True
     )
 
-# ==========================================
 # HISTORICAL TREND
-# ==========================================
 
 st.subheader("Historical Enrollment Trend")
 
@@ -350,17 +302,11 @@ else:
     )
 
 trend_fig = px.line(
-
     trend_df,
-
     x='Year',
-
     y='Tertiary_Enrollment',
-
     markers=True,
-
     title=trend_title
-
 )
 
 trend_fig.update_layout(
@@ -374,9 +320,7 @@ st.plotly_chart(
     use_container_width=True
 )
 
-# ==========================================
 # MULTIPLE REGRESSION
-# ==========================================
 
 st.subheader(
     "Multiple Regression Analysis"
@@ -389,7 +333,6 @@ regression_features = [
     'GDP_per_Capita_Log',
     'Upper_Secondary_Completion',
     'Urban_Population'
-
 ]
 
 reg_df = filtered_df[
@@ -399,7 +342,6 @@ reg_df = filtered_df[
 
 # Force numeric
 for col in reg_df.columns:
-
     reg_df[col] = pd.to_numeric(
         reg_df[col],
         errors='coerce'
@@ -408,57 +350,41 @@ for col in reg_df.columns:
 reg_df = reg_df.dropna()
 
 if len(reg_df) > 10:
-
     X = reg_df[regression_features]
-
     y = reg_df['Tertiary_Enrollment']
-
     X = sm.add_constant(X)
-
     model = sm.OLS(y, X).fit()
-
     coefficients = model.params.drop('const')
-
     p_values = model.pvalues.drop('const')
-
     coefficient_df = pd.DataFrame({
-
         'Variable': coefficients.index,
-
         'Coefficient': coefficients.values,
-
         'P_Value': p_values.values
-
     })
 
     coefficient_df['Significance'] = (
         coefficient_df['P_Value']
         .apply(
-
             lambda p:
             'Highly Significant'
             if p < 0.01 else
             'Significant'
             if p < 0.05 else
             'Not Significant'
-
         )
     )
 
     coefficient_df['Relationship'] = (
         coefficient_df['Coefficient']
         .apply(
-
             lambda c:
             'Positive'
             if c > 0 else
             'Negative'
-
         )
     )
 
     rename_map = {
-
         'Gov_Expenditure_Education':
             'Education Spending',
 
@@ -482,24 +408,16 @@ if len(reg_df) > 10:
     )
 
     coefficient_fig = px.bar(
-
         coefficient_df,
-
         x='Variable',
-
         y='Coefficient',
-
         color='Relationship',
-
         text='Coefficient',
-
         hover_data=[
             'P_Value',
             'Significance'
         ],
-
         title='Regression Coefficients'
-
     )
 
     coefficient_fig.update_traces(
@@ -517,9 +435,7 @@ if len(reg_df) > 10:
         use_container_width=True
     )
 
-    # ==========================================
     # REGRESSION SUMMARY
-    # ==========================================
 
     st.subheader("Regression Interpretation")
 
@@ -527,11 +443,9 @@ if len(reg_df) > 10:
         coefficient_df,
         use_container_width=True
     )
-
     st.text(model.summary())
 
 else:
-
     st.warning(
         "Insufficient data for regression analysis."
     )
