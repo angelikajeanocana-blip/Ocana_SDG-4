@@ -11,46 +11,8 @@ st.set_page_config(page_title="SDG 4 Dashboard", layout="wide")
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
-
 /* ── Base ─────────────────────────────────────────────── */
-html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-    color: #1a2340;
-}
-
 .main { background-color: #f0f3f9; }
-
-h1, h2, h3, h4 {
-    font-family: 'DM Serif Display', serif;
-    color: #1a2340;
-}
-
-/* ── Page title ───────────────────────────────────────── */
-.page-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 2.2rem;
-    color: #1a2340;
-    margin-bottom: 2px;
-}
-
-.page-subtitle {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 1rem;
-    color: #5a6a8a;
-    margin-bottom: 24px;
-    font-weight: 400;
-}
-
-/* ── Section headers ──────────────────────────────────── */
-.section-header {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.45rem;
-    color: #1a2340;
-    margin: 28px 0 14px 0;
-    border-left: 4px solid #3B60E4;
-    padding-left: 12px;
-}
 
 /* ── KPI Cards ────────────────────────────────────────── */
 .kpi-card {
@@ -65,7 +27,6 @@ h1, h2, h3, h4 {
 .kpi-card:hover { transform: translateY(-3px); }
 
 .kpi-label {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.72rem;
     font-weight: 600;
     letter-spacing: 0.08em;
@@ -76,7 +37,6 @@ h1, h2, h3, h4 {
 }
 
 .kpi-value {
-    font-family: 'DM Serif Display', serif;
     font-size: 1.85rem;
     font-weight: 400;
     color: #ffffff;
@@ -88,7 +48,6 @@ h1, h2, h3, h4 {
     padding: 20px 22px;
     border-radius: 14px;
     background: #EEF3FF;
-    border-left: 5px solid #3B60E4;
     margin: 14px 0 20px 0;
     box-shadow: 0 2px 10px rgba(59,96,228,0.09);
 }
@@ -97,7 +56,6 @@ h1, h2, h3, h4 {
     padding: 20px 22px;
     border-radius: 14px;
     background: #EDFAF5;
-    border-left: 5px solid #10B981;
     margin: 14px 0 20px 0;
     box-shadow: 0 2px 10px rgba(16,185,129,0.09);
 }
@@ -106,7 +64,6 @@ h1, h2, h3, h4 {
     padding: 20px 22px;
     border-radius: 14px;
     background: #F3EEFF;
-    border-left: 5px solid #7C3AED;
     margin: 14px 0 20px 0;
     box-shadow: 0 2px 10px rgba(124,58,237,0.09);
 }
@@ -115,7 +72,6 @@ h1, h2, h3, h4 {
     padding: 20px 22px;
     border-radius: 14px;
     background: #FFFBEE;
-    border-left: 5px solid #F59E0B;
     margin: 14px 0 20px 0;
     box-shadow: 0 2px 10px rgba(245,158,11,0.09);
 }
@@ -125,7 +81,6 @@ h1, h2, h3, h4 {
 .insight-teal h4,
 .insight-violet h4,
 .insight-amber h4 {
-    font-family: 'DM Serif Display', serif;
     font-size: 1.05rem;
     color: #1a2340;
     margin: 0 0 10px 0;
@@ -139,7 +94,6 @@ h1, h2, h3, h4 {
 .insight-teal span,
 .insight-violet span,
 .insight-amber span {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.93rem;
     color: #2e3d5c;
     line-height: 1.65;
@@ -156,7 +110,6 @@ h1, h2, h3, h4 {
 
 /* ── Regression table title ───────────────────────────── */
 .reg-title {
-    font-family: 'DM Serif Display', serif;
     font-size: 1.35rem;
     color: #1a2340;
     margin: 18px 0 10px 0;
@@ -167,20 +120,17 @@ h1, h2, h3, h4 {
     padding: 18px 22px;
     border-radius: 14px;
     background: #ffffff;
-    border-left: 5px solid #3B60E4;
     margin-bottom: 14px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.07);
 }
 
 .interp-card h4 {
-    font-family: 'DM Serif Display', serif;
     font-size: 1.0rem;
     color: #1a2340;
     margin: 0 0 8px 0;
 }
 
 .interp-card p {
-    font-family: 'DM Sans', sans-serif;
     font-size: 0.91rem;
     color: #2e3d5c;
     line-height: 1.65;
@@ -191,10 +141,6 @@ h1, h2, h3, h4 {
     color: #1a2340;
     font-weight: 600;
 }
-
-/* interp accent colors */
-.interp-pos { border-left-color: #10B981; }
-.interp-neg { border-left-color: #EF4444; }
 
 /* ── Divider ──────────────────────────────────────────── */
 .divider {
@@ -215,8 +161,8 @@ h1, h2, h3, h4 {
 
 # ── TITLE ────────────────────────────────────────────────────────────────────
 
-st.markdown('<p class="page-title">🎓 SDG 4: Drivers of Tertiary Enrollment</p>', unsafe_allow_html=True)
-st.markdown('<p class="page-subtitle">Investigating socio-economic factors affecting tertiary school enrollment across countries</p>', unsafe_allow_html=True)
+st.title("🎓 SDG 4: Drivers of Tertiary Enrollment")
+st.write("Investigating socio-economic factors affecting tertiary school enrollment across countries")
 
 # ── LOAD DATA ────────────────────────────────────────────────────────────────
 
@@ -270,7 +216,7 @@ filtered_df = df[df['Year'] == selected_year]
 
 # ── KPI SECTION ──────────────────────────────────────────────────────────────
 
-st.markdown('<p class="section-header">📊 Global KPI Indicators</p>', unsafe_allow_html=True)
+st.subheader("📊 Global KPI Indicators")
 
 tertiary = filtered_df['Tertiary_Enrollment'].mean()
 internet = filtered_df['Internet_Usage'].mean()
@@ -305,7 +251,7 @@ map_col, scatter_col = st.columns(2)
 
 # — Choropleth Map —
 with map_col:
-    st.markdown('<p class="section-header">🌍 Global Enrollment Map</p>', unsafe_allow_html=True)
+    st.subheader("🌍 Global Enrollment Map")
 
     map_df = filtered_df.dropna(subset=['Country Code', 'Tertiary_Enrollment'])
 
@@ -320,8 +266,6 @@ with map_col:
     map_fig.update_layout(
         template='plotly_white',
         height=460,
-        font=dict(family='DM Sans', color='#1a2340'),
-        title_font=dict(family='DM Serif Display', size=16, color='#1a2340'),
         margin=dict(l=0, r=0, t=40, b=0),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)'
@@ -347,7 +291,7 @@ with map_col:
 
 # — Scatter —
 with scatter_col:
-    st.markdown(f'<p class="section-header">📈 Enrollment vs {selected_driver_label}</p>', unsafe_allow_html=True)
+    st.subheader(f"📈 Enrollment vs {selected_driver_label}")
 
     scatter_df = filtered_df.dropna(subset=['Tertiary_Enrollment', selected_driver])
     trendline_mode = "ols" if len(scatter_df) > 1 else None
@@ -377,12 +321,9 @@ with scatter_col:
     scatter_fig.update_layout(
         template='plotly_white',
         height=460,
-        font=dict(family='DM Sans', color='#1a2340'),
-        title_font=dict(family='DM Serif Display', size=16, color='#1a2340'),
         margin=dict(l=0, r=0, t=10, b=0),
         paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(248,250,255,1)',
-        legend=dict(font=dict(family='DM Sans', color='#1a2340'))
+        plot_bgcolor='rgba(248,250,255,1)'
     )
     st.plotly_chart(scatter_fig, use_container_width=True)
 
@@ -408,7 +349,7 @@ st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
 # ── HISTORICAL TREND ──────────────────────────────────────────────────────────
 
-st.markdown('<p class="section-header">📉 Historical Enrollment Trend</p>', unsafe_allow_html=True)
+st.subheader("📉 Historical Enrollment Trend")
 
 if selected_country == 'All':
     trend_df    = df.groupby('Year')['Tertiary_Enrollment'].mean().reset_index()
@@ -426,8 +367,6 @@ trend_fig.update_traces(line=dict(width=2.5), marker=dict(size=6))
 trend_fig.update_layout(
     template='plotly_white',
     height=420,
-    font=dict(family='DM Sans', color='#1a2340'),
-    title_font=dict(family='DM Serif Display', size=17, color='#1a2340'),
     yaxis_range=[0, 110],
     paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(248,250,255,1)',
@@ -457,12 +396,8 @@ st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
 # ── MULTIPLE REGRESSION ───────────────────────────────────────────────────────
 
-st.markdown('<p class="section-header">🔬 Multiple Regression Analysis</p>', unsafe_allow_html=True)
-st.markdown(
-    '<p style="font-family:\'DM Sans\',sans-serif;font-size:0.95rem;color:#5a6a8a;margin-bottom:18px;">'
-    'This model estimates how socio-economic indicators jointly affect tertiary enrollment across countries.</p>',
-    unsafe_allow_html=True
-)
+st.subheader("🔬 Multiple Regression Analysis")
+st.write("This model estimates how socio-economic indicators jointly affect tertiary enrollment across countries.")
 
 regression_features = [
     'Gov_Expenditure_Education', 'Internet_Usage', 'GDP_per_Capita_Log',
@@ -529,22 +464,13 @@ if len(reg_df) > 10:
     </div>""", unsafe_allow_html=True)
 
     # — Variable Interpretations —
-    st.markdown('<p class="section-header">📘 Variable Interpretation</p>', unsafe_allow_html=True)
-
-    accent_colors = {
-        'Education Spending':          '#2563EB',
-        'Internet Access':             '#059669',
-        'GDP per Capita (Log)':        '#7C3AED',
-        'Upper Secondary Completion':  '#D97706',
-        'Urban Population':            '#DC2626',
-    }
+    st.subheader("📘 Variable Interpretation")
 
     for _, row in regression_table.iterrows():
         variable = row['Explanatory Variable']
         coef     = row['Coefficient']
         pval     = row['P-Value']
         relation = row['Relationship']
-        color    = accent_colors.get(variable, '#3B60E4')
 
         strength = (
             "strong" if abs(coef) >= 1 else
@@ -558,8 +484,7 @@ if len(reg_df) > 10:
         pos_neg = "increase" if coef > 0 else "decrease"
 
         st.markdown(f"""
-        <div class="interp-card {'interp-pos' if coef > 0 else 'interp-neg'}"
-             style="border-left-color:{color};">
+        <div class="interp-card">
             <h4>{variable}</h4>
             <p>
             A one-unit increase in <strong>{variable}</strong> is associated with an estimated
