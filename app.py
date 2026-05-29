@@ -12,14 +12,14 @@ st.set_page_config(page_title="SDG 4 Dashboard", layout="wide")
 st.markdown("""
 <style>
 /* ── Base ─────────────────────────────────────────────── */
-/* Using Streamlit's native variables ensures Light/Dark mode compatibility */
+/* Using Streamlit's native variables ensures Light/Dark mode compatibility for the main page */
 .main { background-color: var(--background-color); }
 
-/* ── KPI Cards ────────────────────────────────────────── */
+/* ── KPI Cards (Untouched as requested) ───────────────── */
 .kpi-card {
     padding: 24px 16px;
     border-radius: 12px;
-    color: #ffffff; /* White text looks best on these strong background colors regardless of theme */
+    color: #ffffff;
     text-align: center;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     margin-bottom: 16px;
@@ -42,38 +42,37 @@ st.markdown("""
     line-height: 1.1;
 }
 
-/* ── Insight boxes (Theme Adaptive) ───────────────────── */
+/* ── Insight boxes (Strong Colors) ───────────────────── */
 .insight-box {
     padding: 24px;
     border-radius: 12px;
-    background-color: var(--secondary-background-color);
-    color: var(--text-color);
     margin: 16px 0 24px 0;
-    border-left: 8px solid var(--primary-color); /* Strong color accent */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Specific left-border colors */
-.insight-box.blue { border-left-color: #3B82F6; }
-.insight-box.teal { border-left-color: #10B981; }
-.insight-box.violet { border-left-color: #8B5CF6; }
-.insight-box.amber { border-left-color: #F59E0B; }
+/* Deep, rich backgrounds with bright accent borders to fit the palette */
+.insight-box.blue   { background-color: #172554; border-left: 6px solid #3B82F6; } /* Deep Navy */
+.insight-box.teal   { background-color: #022C22; border-left: 6px solid #10B981; } /* Forest Teal */
+.insight-box.violet { background-color: #2E1065; border-left: 6px solid #8B5CF6; } /* Midnight Violet */
+.insight-box.amber  { background-color: #451A03; border-left: 6px solid #F59E0B; } /* Dark Amber */
 
+/* Forcing text to light colors guarantees readability in BOTH light and dark mode */
 .insight-box h4 {
     font-size: 1.25rem;
     margin: 0 0 12px 0;
-    color: var(--text-color);
+    color: #F8FAFC; 
 }
 
 .insight-box p, .insight-box span {
     font-size: 1.05rem;
     line-height: 1.6;
     margin: 0;
+    color: #E2E8F0;
 }
 
 .insight-box strong {
     font-weight: 700;
-    color: var(--text-color);
+    color: #FFFFFF;
 }
 
 /* ── Regression table title ───────────────────────────── */
@@ -84,22 +83,22 @@ st.markdown("""
     margin: 24px 0 12px 0;
 }
 
-/* ── Interpretation cards (Grid ready) ────────────────── */
+/* ── Interpretation cards (Grid ready, Strong Colors) ─── */
 .interp-card {
     padding: 22px;
     border-radius: 12px;
-    background-color: var(--secondary-background-color);
-    border: 1px solid rgba(150,150,150,0.2);
-    color: var(--text-color);
+    background-color: #0F172A; /* Deep Slate to unify the bottom section */
+    border: 1px solid #1E293B;
     margin-bottom: 16px;
     height: 90%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .interp-card h4 {
     font-size: 1.15rem;
     margin: 0 0 10px 0;
-    color: var(--text-color);
-    border-bottom: 2px solid var(--primary-color);
+    color: #F8FAFC;
+    border-bottom: 2px solid #38BDF8; /* Bright Sky Blue accent */
     display: inline-block;
     padding-bottom: 4px;
 }
@@ -108,6 +107,11 @@ st.markdown("""
     font-size: 1rem;
     line-height: 1.6;
     margin: 0;
+    color: #CBD5E1; /* Muted white for body text */
+}
+
+.interp-card strong {
+    color: #FFFFFF;
 }
 
 /* ── Divider ──────────────────────────────────────────── */
@@ -422,7 +426,7 @@ if len(reg_df) > 10:
         </p>
     </div>""", unsafe_allow_html=True)
 
-    # — Variable Interpretations (Now in a Grid Layout) —
+    # — Variable Interpretations (Grid Layout) —
     st.subheader("📘 Variable Interpretation")
     
     # We use st.columns(2) to arrange the interpretation boxes side-by-side
