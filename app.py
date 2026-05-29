@@ -438,12 +438,12 @@ if len(reg_df) > 10:
         regression_table.style
             .format({'Coefficient': '{:.3f}', 'Std Error': '{:.3f}',
                      'T-Statistic': '{:.3f}', 'P-Value': '{:.4f}'})
-            .applymap(
+            .map(
                 lambda v: 'color:#059669;font-weight:600' if v == 'Positive'
                           else 'color:#DC2626;font-weight:600',
                 subset=['Relationship']
             )
-            .applymap(
+            .map(
                 lambda v: 'color:#059669;font-weight:600' if isinstance(v, float) and v < 0.05
                           else 'color:#5a6a8a',
                 subset=['P-Value']
