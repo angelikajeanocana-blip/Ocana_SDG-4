@@ -357,6 +357,57 @@ if len(trend_df) > 1:
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
+# ── CORRELATION ANALYSIS ──────────────────────────────────────────────────────
+
+st.subheader("🔗 Correlation Analysis")
+st.write("Visualizing the linear relationships between tertiary enrollment and socio-economic drivers.")
+
+corr_features = [
+    'Tertiary_Enrollment', 'Gov_Expenditure_Education', 'Internet_Usage', 
+    'GDP_per_Capita_Log', 'Upper_Secondary_Completion', 'Urban_Population'
+]
+
+corr_df = filtered_df[corr_features].dropna()
+
+if len(corr_df) > 1:
+    corr_matrix = corr_df.corr()
+    
+    # Rename for better display
+    rename_dict = {
+        'Tertiary_Enrollment': 'Enrollment',
+        'Gov_Expenditure_Education': 'Edu Spending',
+        'Internet_Usage': 'Internet Access',
+        'GDP_per_Capita_Log': 'Log GDP per Capita',
+        'Upper_Secondary_Completion': 'Upper Sec Completion',
+        'Urban_Population': 'Urban Population'
+    }
+    corr_matrix = corr_matrix.rename(columns=rename_dict, index=rename_dict)
+    
+    corr_fig = px.imshow(
+        corr_matrix,
+        text_auto=".2f",
+        aspect="auto",
+        color_continuous_scale="Blues",
+        title=f"Correlation Matrix ({selected_year})"
+    )
+    
+    corr_fig.update_layout(height=500, margin=dict(l=0, r=0, t=40, b=0))
+    st.plotly_chart(corr_fig, use_container_width=True)
+    
+    st.markdown(f"""
+    <div class="insight-box blue">
+        <h4>🔗 Correlation Insights</h4>
+        <p>
+        The heatmap above displays the Pearson correlation coefficients between the variables for <strong>{selected_year}</strong>. 
+        Values closer to <strong>1</strong> or <strong>-1</strong> indicate stronger linear relationships with Tertiary Enrollment, 
+        which helps identify key drivers before proceeding to the regression model.
+        </p>
+    </div>""", unsafe_allow_html=True)
+else:
+    st.warning("Insufficient data for correlation analysis in the selected year.")
+
+st.markdown('<hr class="divider">', unsafe_allow_html=True)
+
 # ── MULTIPLE REGRESSION ───────────────────────────────────────────────────────
 
 st.subheader("🔬 Multiple Regression Analysis")
