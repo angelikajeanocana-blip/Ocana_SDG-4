@@ -12,148 +12,115 @@ st.set_page_config(page_title="SDG 4 Dashboard", layout="wide")
 st.markdown("""
 <style>
 /* ── Base ─────────────────────────────────────────────── */
-.main { background-color: #f0f3f9; }
+/* Using Streamlit's native variables ensures Light/Dark mode compatibility */
+.main { background-color: var(--background-color); }
 
 /* ── KPI Cards ────────────────────────────────────────── */
 .kpi-card {
-    padding: 20px 14px 18px 14px;
-    border-radius: 16px;
-    color: #ffffff;
+    padding: 24px 16px;
+    border-radius: 12px;
+    color: #ffffff; /* White text looks best on these strong background colors regardless of theme */
     text-align: center;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.13);
-    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    margin-bottom: 16px;
     transition: transform 0.2s ease;
 }
-.kpi-card:hover { transform: translateY(-3px); }
+.kpi-card:hover { transform: translateY(-4px); }
 
 .kpi-label {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    opacity: 0.88;
-    margin-bottom: 6px;
-    color: #ffffff;
+    opacity: 0.9;
+    margin-bottom: 8px;
 }
 
 .kpi-value {
-    font-size: 1.85rem;
-    font-weight: 400;
-    color: #ffffff;
+    font-size: 2.2rem;
+    font-weight: 600;
     line-height: 1.1;
 }
 
-/* ── Insight boxes ────────────────────────────────────── */
-.insight-blue {
-    padding: 20px 22px;
-    border-radius: 14px;
-    background: #EEF3FF;
-    margin: 14px 0 20px 0;
-    box-shadow: 0 2px 10px rgba(59,96,228,0.09);
+/* ── Insight boxes (Theme Adaptive) ───────────────────── */
+.insight-box {
+    padding: 24px;
+    border-radius: 12px;
+    background-color: var(--secondary-background-color);
+    color: var(--text-color);
+    margin: 16px 0 24px 0;
+    border-left: 8px solid var(--primary-color); /* Strong color accent */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-.insight-teal {
-    padding: 20px 22px;
-    border-radius: 14px;
-    background: #EDFAF5;
-    margin: 14px 0 20px 0;
-    box-shadow: 0 2px 10px rgba(16,185,129,0.09);
+/* Specific left-border colors */
+.insight-box.blue { border-left-color: #3B82F6; }
+.insight-box.teal { border-left-color: #10B981; }
+.insight-box.violet { border-left-color: #8B5CF6; }
+.insight-box.amber { border-left-color: #F59E0B; }
+
+.insight-box h4 {
+    font-size: 1.25rem;
+    margin: 0 0 12px 0;
+    color: var(--text-color);
 }
 
-.insight-violet {
-    padding: 20px 22px;
-    border-radius: 14px;
-    background: #F3EEFF;
-    margin: 14px 0 20px 0;
-    box-shadow: 0 2px 10px rgba(124,58,237,0.09);
-}
-
-.insight-amber {
-    padding: 20px 22px;
-    border-radius: 14px;
-    background: #FFFBEE;
-    margin: 14px 0 20px 0;
-    box-shadow: 0 2px 10px rgba(245,158,11,0.09);
-}
-
-/* shared text rules for all insight boxes */
-.insight-blue h4,
-.insight-teal h4,
-.insight-violet h4,
-.insight-amber h4 {
+.insight-box p, .insight-box span {
     font-size: 1.05rem;
-    color: #1a2340;
-    margin: 0 0 10px 0;
-}
-
-.insight-blue p,
-.insight-teal p,
-.insight-violet p,
-.insight-amber p,
-.insight-blue span,
-.insight-teal span,
-.insight-violet span,
-.insight-amber span {
-    font-size: 0.93rem;
-    color: #2e3d5c;
-    line-height: 1.65;
+    line-height: 1.6;
     margin: 0;
 }
 
-.insight-blue strong,
-.insight-teal strong,
-.insight-violet strong,
-.insight-amber strong {
-    color: #1a2340;
-    font-weight: 600;
+.insight-box strong {
+    font-weight: 700;
+    color: var(--text-color);
 }
 
 /* ── Regression table title ───────────────────────────── */
 .reg-title {
-    font-size: 1.35rem;
-    color: #1a2340;
-    margin: 18px 0 10px 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 24px 0 12px 0;
 }
 
-/* ── Interpretation cards ─────────────────────────────── */
+/* ── Interpretation cards (Grid ready) ────────────────── */
 .interp-card {
-    padding: 18px 22px;
-    border-radius: 14px;
-    background: #ffffff;
-    margin-bottom: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 22px;
+    border-radius: 12px;
+    background-color: var(--secondary-background-color);
+    border: 1px solid rgba(150,150,150,0.2);
+    color: var(--text-color);
+    margin-bottom: 16px;
+    height: 90%;
 }
 
 .interp-card h4 {
-    font-size: 1.0rem;
-    color: #1a2340;
-    margin: 0 0 8px 0;
+    font-size: 1.15rem;
+    margin: 0 0 10px 0;
+    color: var(--text-color);
+    border-bottom: 2px solid var(--primary-color);
+    display: inline-block;
+    padding-bottom: 4px;
 }
 
 .interp-card p {
-    font-size: 0.91rem;
-    color: #2e3d5c;
-    line-height: 1.65;
+    font-size: 1rem;
+    line-height: 1.6;
     margin: 0;
-}
-
-.interp-card strong {
-    color: #1a2340;
-    font-weight: 600;
 }
 
 /* ── Divider ──────────────────────────────────────────── */
 .divider {
     border: none;
-    border-top: 1.5px solid #dde3f0;
-    margin: 28px 0;
+    border-top: 2px solid var(--secondary-background-color);
+    margin: 32px 0;
 }
 
 /* ── Dataframe tweaks ─────────────────────────────────── */
 [data-testid="stDataFrame"] {
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
 }
 
 </style>
@@ -202,9 +169,9 @@ selected_country = st.sidebar.selectbox("Select Country", country_options)
 driver_options = {
     'Government Expenditure (% GDP)': 'Gov_Expenditure_Education',
     'Internet Usage (% Population)':  'Internet_Usage',
-    'Log GDP per Capita':              'GDP_per_Capita_Log',
-    'Upper Secondary Completion':      'Upper_Secondary_Completion',
-    'Urban Population (%)':            'Urban_Population'
+    'Log GDP per Capita':             'GDP_per_Capita_Log',
+    'Upper Secondary Completion':     'Upper_Secondary_Completion',
+    'Urban Population (%)':           'Urban_Population'
 }
 
 selected_driver_label = st.sidebar.selectbox(
@@ -226,7 +193,7 @@ upper    = filtered_df['Upper_Secondary_Completion'].mean()
 urban    = filtered_df['Urban_Population'].mean()
 
 kpi_data = [
-    ("#1E3A8A", "Enrollment",       f"{tertiary:.1f}%"),
+    ("#1E40AF", "Enrollment",       f"{tertiary:.1f}%"),
     ("#2563EB", "Internet Access",  f"{internet:.1f}%"),
     ("#059669", "Edu. Spending",    f"{gov:.1f}%"),
     ("#7C3AED", "GDP per Capita",   f"${gdp:,.0f}"),
@@ -263,12 +230,10 @@ with map_col:
         color_continuous_scale='Blues',
         title=f"Tertiary Enrollment Rate ({selected_year})"
     )
+    # Removing fixed layout background colors lets Streamlit style it natively!
     map_fig.update_layout(
-        template='plotly_white',
         height=460,
-        margin=dict(l=0, r=0, t=40, b=0),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)'
+        margin=dict(l=0, r=0, t=40, b=0)
     )
     st.plotly_chart(map_fig, use_container_width=True)
 
@@ -276,7 +241,7 @@ with map_col:
         top    = map_df.loc[map_df['Tertiary_Enrollment'].idxmax()]
         bottom = map_df.loc[map_df['Tertiary_Enrollment'].idxmin()]
         st.markdown(f"""
-        <div class="insight-blue">
+        <div class="insight-box blue">
             <h4>🌍 Geographic Enrollment Insights</h4>
             <p>
             The map shows tertiary enrollment distribution for <strong>{selected_year}</strong>.
@@ -303,7 +268,7 @@ with scatter_col:
         hover_name='Country Name',
         trendline=trendline_mode,
         labels={selected_driver: selected_driver_label, 'Tertiary_Enrollment': 'Enrollment (%)'},
-        color_discrete_sequence=['#3B60E4']
+        color_discrete_sequence=['#3B82F6']
     )
 
     if selected_country != 'All':
@@ -319,11 +284,8 @@ with scatter_col:
             ))
 
     scatter_fig.update_layout(
-        template='plotly_white',
         height=460,
-        margin=dict(l=0, r=0, t=10, b=0),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(248,250,255,1)'
+        margin=dict(l=0, r=0, t=10, b=0)
     )
     st.plotly_chart(scatter_fig, use_container_width=True)
 
@@ -332,7 +294,7 @@ with scatter_col:
     strength  = "strong" if abs(corr) >= 0.7 else "moderate" if abs(corr) >= 0.4 else "weak"
 
     st.markdown(f"""
-    <div class="insight-teal">
+    <div class="insight-box teal">
         <h4>📊 Driver Relationship Insights</h4>
         <p>
         There is a <strong>{strength} {direction} relationship</strong> between
@@ -361,15 +323,12 @@ else:
 trend_fig = px.line(
     trend_df, x='Year', y='Tertiary_Enrollment',
     markers=True, title=trend_title,
-    color_discrete_sequence=['#3B60E4']
+    color_discrete_sequence=['#8B5CF6']
 )
-trend_fig.update_traces(line=dict(width=2.5), marker=dict(size=6))
+trend_fig.update_traces(line=dict(width=3), marker=dict(size=8))
 trend_fig.update_layout(
-    template='plotly_white',
     height=420,
     yaxis_range=[0, 110],
-    paper_bgcolor='rgba(0,0,0,0)',
-    plot_bgcolor='rgba(248,250,255,1)',
     margin=dict(l=0, r=0, t=40, b=0)
 )
 st.plotly_chart(trend_fig, use_container_width=True)
@@ -382,7 +341,7 @@ if len(trend_df) > 1:
     tone      = "improvement" if change > 0 else "decline"
 
     st.markdown(f"""
-    <div class="insight-violet">
+    <div class="insight-box violet">
         <h4>📉 Historical Trend Insights</h4>
         <p>
         Tertiary enrollment has <strong>{direction}</strong> from
@@ -439,13 +398,13 @@ if len(reg_df) > 10:
             .format({'Coefficient': '{:.3f}', 'Std Error': '{:.3f}',
                      'T-Statistic': '{:.3f}', 'P-Value': '{:.4f}'})
             .map(
-                lambda v: 'color:#059669;font-weight:600' if v == 'Positive'
-                          else 'color:#DC2626;font-weight:600',
+                lambda v: 'color:#10B981;font-weight:700' if v == 'Positive'
+                          else 'color:#EF4444;font-weight:700',
                 subset=['Relationship']
             )
             .map(
-                lambda v: 'color:#059669;font-weight:600' if isinstance(v, float) and v < 0.05
-                          else 'color:#5a6a8a',
+                lambda v: 'color:#10B981;font-weight:700' if isinstance(v, float) and v < 0.05
+                          else 'color:gray',
                 subset=['P-Value']
             ),
         use_container_width=True,
@@ -454,7 +413,7 @@ if len(reg_df) > 10:
 
     r_squared = model.rsquared
     st.markdown(f"""
-    <div class="insight-amber">
+    <div class="insight-box amber">
         <h4>🧠 Overall Model Performance</h4>
         <p>
         The regression model achieved an <strong>R² of {r_squared:.3f}</strong>, meaning approximately
@@ -463,10 +422,13 @@ if len(reg_df) > 10:
         </p>
     </div>""", unsafe_allow_html=True)
 
-    # — Variable Interpretations —
+    # — Variable Interpretations (Now in a Grid Layout) —
     st.subheader("📘 Variable Interpretation")
+    
+    # We use st.columns(2) to arrange the interpretation boxes side-by-side
+    interp_cols = st.columns(2)
 
-    for _, row in regression_table.iterrows():
+    for i, row in regression_table.iterrows():
         variable = row['Explanatory Variable']
         coef     = row['Coefficient']
         pval     = row['P-Value']
@@ -482,18 +444,20 @@ if len(reg_df) > 10:
             else "not statistically significant"
         )
         pos_neg = "increase" if coef > 0 else "decrease"
-
-        st.markdown(f"""
-        <div class="interp-card">
-            <h4>{variable}</h4>
-            <p>
-            A one-unit increase in <strong>{variable}</strong> is associated with an estimated
-            <strong>{abs(coef):.3f}-point {pos_neg}</strong> in tertiary enrollment for
-            <strong>{selected_year}</strong>. This variable shows a
-            <strong>{strength} {relation.lower()} relationship</strong> and is
-            <strong>{significance}</strong> at conventional levels (p = {pval:.4f}).
-            </p>
-        </div>""", unsafe_allow_html=True)
+        
+        # Place the card in alternating columns
+        with interp_cols[i % 2]:
+            st.markdown(f"""
+            <div class="interp-card">
+                <h4>{variable}</h4>
+                <p>
+                A one-unit increase in <strong>{variable}</strong> is associated with an estimated
+                <strong>{abs(coef):.3f}-point {pos_neg}</strong> in tertiary enrollment for
+                <strong>{selected_year}</strong>.<br><br> This variable shows a
+                <strong>{strength} {relation.lower()} relationship</strong> and is
+                <strong>{significance}</strong> at conventional levels (p = {pval:.4f}).
+                </p>
+            </div>""", unsafe_allow_html=True)
 
 else:
     st.warning("Insufficient data for regression analysis in the selected year.")
