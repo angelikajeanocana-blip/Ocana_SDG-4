@@ -5,17 +5,16 @@ import plotly.express as px
 import plotly.graph_objects as go
 import statsmodels.api as sm
 
-# ── PAGE CONFIG ──────────────────────────────────────────────────────────────
+# ── PAGE CONFIG 
 
 st.set_page_config(page_title="SDG 4 Dashboard", layout="wide")
 
 st.markdown("""
 <style>
-/* ── Base ─────────────────────────────────────────────── */
-/* Using Streamlit's native variables ensures Light/Dark mode compatibility for the main page */
+/* Base */
 .main { background-color: var(--background-color); }
 
-/* ── KPI Cards (Untouched as requested) ───────────────── */
+/* KPI Cards */
 .kpi-card {
     padding: 24px 16px;
     border-radius: 12px;
@@ -42,7 +41,7 @@ st.markdown("""
     line-height: 1.1;
 }
 
-/* ── Insight boxes (Strong Colors) ───────────────────── */
+/* Insight boxes */
 .insight-box {
     padding: 24px;
     border-radius: 12px;
@@ -50,13 +49,11 @@ st.markdown("""
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Deep, rich backgrounds with bright accent borders to fit the palette */
 .insight-box.blue   { background-color: #172554; border-left: 6px solid #3B82F6; } /* Deep Navy */
 .insight-box.teal   { background-color: #022C22; border-left: 6px solid #10B981; } /* Forest Teal */
 .insight-box.violet { background-color: #2E1065; border-left: 6px solid #8B5CF6; } /* Midnight Violet */
 .insight-box.amber  { background-color: #451A03; border-left: 6px solid #F59E0B; } /* Dark Amber */
 
-/* Forcing text to light colors guarantees readability in BOTH light and dark mode */
 .insight-box h4 {
     font-size: 1.25rem;
     margin: 0 0 12px 0;
@@ -75,7 +72,7 @@ st.markdown("""
     color: #FFFFFF;
 }
 
-/* ── Regression table title ───────────────────────────── */
+/* Regression table title */
 .reg-title {
     font-size: 1.4rem;
     font-weight: 600;
@@ -83,11 +80,11 @@ st.markdown("""
     margin: 24px 0 12px 0;
 }
 
-/* ── Interpretation cards (Grid ready, Strong Colors) ─── */
+/* Interpretation cards */
 .interp-card {
     padding: 22px;
     border-radius: 12px;
-    background-color: #0F172A; /* Deep Slate to unify the bottom section */
+    background-color: #0F172A; 
     border: 1px solid #1E293B;
     margin-bottom: 16px;
     height: 90%;
@@ -98,7 +95,7 @@ st.markdown("""
     font-size: 1.15rem;
     margin: 0 0 10px 0;
     color: #F8FAFC;
-    border-bottom: 2px solid #38BDF8; /* Bright Sky Blue accent */
+    border-bottom: 2px solid #38BDF8;
     display: inline-block;
     padding-bottom: 4px;
 }
@@ -107,21 +104,21 @@ st.markdown("""
     font-size: 1rem;
     line-height: 1.6;
     margin: 0;
-    color: #CBD5E1; /* Muted white for body text */
+    color: #CBD5E1; 
 }
 
 .interp-card strong {
     color: #FFFFFF;
 }
 
-/* ── Divider ──────────────────────────────────────────── */
+/* Divider */
 .divider {
     border: none;
-    border-top: 2px solid var(--secondary-background-color);
+    border-top: 2px solid var;
     margin: 32px 0;
 }
 
-/* ── Dataframe tweaks ─────────────────────────────────── */
+/* Dataframe tweaks */
 [data-testid="stDataFrame"] {
     border-radius: 12px;
     overflow: hidden;
@@ -130,12 +127,12 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── TITLE ────────────────────────────────────────────────────────────────────
+# TITLE 
 
 st.title("🎓 SDG 4: Drivers of Tertiary Enrollment")
 st.write("Investigating socio-economic factors affecting tertiary school enrollment across countries")
 
-# ── LOAD DATA ────────────────────────────────────────────────────────────────
+# LOAD DATA 
 
 @st.cache_data
 def load_data():
@@ -156,7 +153,7 @@ def load_data():
 
 df = load_data()
 
-# ── SIDEBAR ──────────────────────────────────────────────────────────────────
+# SIDEBAR 
 
 st.sidebar.header("Dashboard Controls")
 
@@ -185,7 +182,7 @@ selected_driver = driver_options[selected_driver_label]
 
 filtered_df = df[df['Year'] == selected_year]
 
-# ── KPI SECTION ──────────────────────────────────────────────────────────────
+# KPI SECTION 
 
 st.subheader("📊 Global KPI Indicators")
 
@@ -216,11 +213,9 @@ for col, (color, label, value) in zip(cols, kpi_data):
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-# ── MAP + SCATTER ─────────────────────────────────────────────────────────────
-
 map_col, scatter_col = st.columns(2)
 
-# — Choropleth Map —
+# Choropleth Map 
 with map_col:
     st.subheader("🌍 Global Enrollment Map")
 
@@ -234,7 +229,7 @@ with map_col:
         color_continuous_scale='Blues',
         title=f"Tertiary Enrollment Rate ({selected_year})"
     )
-    # Removing fixed layout background colors lets Streamlit style it natively!
+  
     map_fig.update_layout(
         height=460,
         margin=dict(l=0, r=0, t=40, b=0)
@@ -258,7 +253,7 @@ with map_col:
             </p>
         </div>""", unsafe_allow_html=True)
 
-# — Scatter —
+# Scatter Plot
 with scatter_col:
     st.subheader(f"📈 Enrollment vs {selected_driver_label}")
 
@@ -313,7 +308,7 @@ with scatter_col:
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-# ── HISTORICAL TREND ──────────────────────────────────────────────────────────
+# HISTORICAL TREND 
 
 st.subheader("📉 Historical Enrollment Trend")
 
@@ -357,7 +352,7 @@ if len(trend_df) > 1:
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-# ── CORRELATION ANALYSIS ──────────────────────────────────────────────────────
+# CORRELATION ANALYSIS 
 
 st.subheader("🔗 Correlation Analysis")
 st.write("Visualizing the linear relationships between tertiary enrollment and socio-economic drivers.")
@@ -372,7 +367,6 @@ corr_df = filtered_df[corr_features].dropna()
 if len(corr_df) > 1:
     corr_matrix = corr_df.corr()
     
-    # Rename for better display
     rename_dict = {
         'Tertiary_Enrollment': 'Enrollment',
         'Gov_Expenditure_Education': 'Edu Spending',
@@ -408,7 +402,7 @@ else:
 
 st.markdown('<hr class="divider">', unsafe_allow_html=True)
 
-# ── MULTIPLE REGRESSION ───────────────────────────────────────────────────────
+# MULTIPLE REGRESSION 
 
 st.subheader("🔬 Multiple Regression Analysis")
 st.write("This model estimates how socio-economic indicators jointly affect tertiary enrollment across countries.")
@@ -477,10 +471,9 @@ if len(reg_df) > 10:
         </p>
     </div>""", unsafe_allow_html=True)
 
-    # — Variable Interpretations (Grid Layout) —
+    # Variable Interpretations 
     st.subheader("📘 Variable Interpretation")
     
-    # We use st.columns(2) to arrange the interpretation boxes side-by-side
     interp_cols = st.columns(2)
 
     for i, row in regression_table.iterrows():
@@ -500,7 +493,6 @@ if len(reg_df) > 10:
         )
         pos_neg = "increase" if coef > 0 else "decrease"
         
-        # Place the card in alternating columns
         with interp_cols[i % 2]:
             st.markdown(f"""
             <div class="interp-card">
