@@ -29,13 +29,23 @@ st.markdown("""
 }
 
 .kpi-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
 
 .kpi-value {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: bold;
+}
+
+.insight-box {
+    padding: 18px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    border-left: 6px solid #2563EB;
+    margin-top: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .interpret-box {
@@ -43,13 +53,20 @@ st.markdown("""
     border-radius: 12px;
     background-color: white;
     margin-bottom: 15px;
-    border-left: 6px solid #2563EB;
+    border-left: 6px solid #10B981;
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .section-title {
     color: #1E3A8A;
     font-weight: bold;
+}
+
+.regression-table-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #1E3A8A;
+    margin-bottom: 10px;
 }
 
 </style>
@@ -80,6 +97,7 @@ def load_data():
     df['Year'] = df['Year'].astype(int)
 
     required_columns = [
+
         'Country Name',
         'Country Code',
         'Tertiary_Enrollment',
@@ -88,6 +106,7 @@ def load_data():
         'GDP_per_Capita',
         'Upper_Secondary_Completion',
         'Urban_Population'
+
     ]
 
     for col in required_columns:
@@ -127,6 +146,7 @@ selected_country = st.sidebar.selectbox(
 )
 
 driver_options = {
+
     'Government Expenditure (% GDP)':
         'Gov_Expenditure_Education',
 
@@ -141,6 +161,7 @@ driver_options = {
 
     'Urban Population (%)':
         'Urban_Population'
+
 }
 
 selected_driver_label = st.sidebar.selectbox(
@@ -151,8 +172,6 @@ selected_driver_label = st.sidebar.selectbox(
 selected_driver = driver_options[
     selected_driver_label
 ]
-
-# FILTER DATA
 
 filtered_df = df[
     df['Year'] == selected_year
@@ -277,6 +296,40 @@ with map_col:
         use_container_width=True
     )
 
+    # MAP INSIGHT
+
+    if not map_df.empty:
+
+        top_country = map_df.loc[
+            map_df['Tertiary_Enrollment'].idxmax()
+        ]
+
+        bottom_country = map_df.loc[
+            map_df['Tertiary_Enrollment'].idxmin()
+        ]
+
+        st.markdown(f"""
+        <div class="insight-box">
+
+        <h4>🌍 Geographic Enrollment Insights</h4>
+
+        The choropleth map visualizes the global distribution of tertiary enrollment rates for <b>{selected_year}</b>.
+
+        <br><br>
+
+        <b>{top_country['Country Name']}</b> achieved one of the highest tertiary enrollment levels at
+        <b>{top_country['Tertiary_Enrollment']:.1f}%</b>,
+        indicating stronger higher education accessibility and participation.
+
+        <br><br>
+
+        Meanwhile, <b>{bottom_country['Country Name']}</b> recorded one of the lowest enrollment levels at
+        <b>{bottom_country['Tertiary_Enrollment']:.1f}%</b>,
+        potentially reflecting barriers in access to tertiary education.
+
+        </div>
+        """, unsafe_allow_html=True)
+
 # SCATTER
 
 with scatter_col:
@@ -300,9 +353,11 @@ with scatter_col:
 
         x=selected_driver,
         y='Tertiary_Enrollment',
-        
+
         hover_name='Country Name',
+
         trendline=trendline_mode,
+
         title=f"Enrollment vs {selected_driver_label}",
 
         labels={
@@ -315,6 +370,7 @@ with scatter_col:
     )
 
     if selected_country != 'All':
+
         c_df = scatter_df[
             scatter_df['Country Name']
             == selected_country
@@ -335,6 +391,7 @@ with scatter_col:
                         size=15,
                         symbol='diamond'
                     ),
+
                     name=selected_country
                 )
             )
@@ -349,6 +406,52 @@ with scatter_col:
         use_container_width=True
     )
 
+    # SCATTER INSIGHT
+
+    corr = scatter_df[
+        [selected_driver, 'Tertiary_Enrollment']
+    ].corr().iloc[0,1]
+
+    direction = (
+        "positive"
+        if corr > 0
+        else "negative"
+    )
+
+    strength = (
+        "strong"
+        if abs(corr) >= 0.7 else
+        "moderate"
+        if abs(corr) >= 0.4 else
+        "weak"
+    )
+
+    st.markdown(f"""
+    <div class="insight-box">
+
+    <h4>📊 Enrollment vs {selected_driver_label} Insights</h4>
+
+    The scatter plot suggests a
+    <b>{strength} {direction} relationship</b>
+    between <b>{selected_driver_label}</b>
+    and tertiary enrollment during <b>{selected_year}</b>.
+
+    <br><br>
+
+    Countries with higher values of
+    <b>{selected_driver_label}</b>
+    generally tend to exhibit
+    {"higher" if corr > 0 else "lower"}
+    tertiary enrollment rates.
+
+    <br><br>
+
+    Correlation coefficient:
+    <b>{corr:.3f}</b>
+
+    </div>
+    """, unsafe_allow_html=True)
+
 # HISTORICAL TREND
 
 st.markdown("""
@@ -356,11 +459,15 @@ st.markdown("""
 """)
 
 if selected_country == 'All':
+
     trend_df = df.groupby('Year')[
         'Tertiary_Enrollment'
     ].mean().reset_index()
+
     trend_title = "Global Mean Enrollment Trend"
+
 else:
+
     trend_df = df[
         df['Country Name']
         == selected_country
@@ -373,10 +480,13 @@ else:
 trend_fig = px.line(
 
     trend_df,
+
     x='Year',
+
     y='Tertiary_Enrollment',
-    
+
     markers=True,
+
     title=trend_title
 )
 
@@ -391,6 +501,48 @@ st.plotly_chart(
     use_container_width=True
 )
 
+# TREND INSIGHT
+
+if len(trend_df) > 1:
+
+    start_value = trend_df[
+        'Tertiary_Enrollment'
+    ].iloc[0]
+
+    end_value = trend_df[
+        'Tertiary_Enrollment'
+    ].iloc[-1]
+
+    change = end_value - start_value
+
+    direction = (
+        "increased"
+        if change > 0
+        else "decreased"
+    )
+
+    st.markdown(f"""
+    <div class="insight-box">
+
+    <h4>📈 Historical Trend Insights</h4>
+
+    Tertiary enrollment has
+    <b>{direction}</b>
+    from
+    <b>{start_value:.1f}%</b>
+    to
+    <b>{end_value:.1f}%</b>
+    over the observed time period.
+
+    <br><br>
+
+    This reflects an overall
+    <b>{'improvement' if change > 0 else 'decline'}</b>
+    in tertiary education participation trends.
+
+    </div>
+    """, unsafe_allow_html=True)
+
 # MULTIPLE REGRESSION
 
 st.markdown("""
@@ -398,15 +550,17 @@ st.markdown("""
 """)
 
 st.markdown("""
-This model estimates how different socio-economic variables affect tertiary school enrollment across countries.
+This model estimates how socio-economic indicators affect tertiary enrollment across countries.
 """)
 
 regression_features = [
+
     'Gov_Expenditure_Education',
     'Internet_Usage',
     'GDP_per_Capita_Log',
     'Upper_Secondary_Completion',
     'Urban_Population'
+
 ]
 
 reg_df = filtered_df[
@@ -427,44 +581,13 @@ if len(reg_df) > 10:
 
     X = reg_df[regression_features]
     y = reg_df['Tertiary_Enrollment']
+
     X = sm.add_constant(X)
-    
+
     model = sm.OLS(y, X).fit()
-    coefficients = model.params.drop('const')
-    p_values = model.pvalues.drop('const')
-
-    coefficient_df = pd.DataFrame({
-        'Variable': coefficients.index,
-        'Coefficient': coefficients.values,
-        'P_Value': p_values.values
-    })
-
-    coefficient_df['Significance'] = (
-        coefficient_df['P_Value']
-        .apply(
-
-            lambda p:
-            'Highly Significant'
-            if p < 0.01 else
-            'Significant'
-            if p < 0.05 else
-            'Not Significant'
-
-        )
-    )
-
-    coefficient_df['Relationship'] = (
-        coefficient_df['Coefficient']
-        .apply(
-
-            lambda c:
-            'Positive'
-            if c > 0 else
-            'Negative'
-        )
-    )
 
     rename_map = {
+
         'Gov_Expenditure_Education':
             'Education Spending',
 
@@ -481,164 +604,130 @@ if len(reg_df) > 10:
             'Urban Population'
     }
 
-    coefficient_df['Variable'] = (
-        coefficient_df['Variable']
-        .map(rename_map)
-    )
+    regression_table = pd.DataFrame({
 
-    # REGRESSION BAR CHART
+        'Explanatory Variable':
+            [rename_map[v] for v in regression_features],
 
-    coefficient_fig = px.bar(
+        'Coefficient':
+            model.params.drop('const').values,
 
-        coefficient_df,
-        x='Variable',
-        y='Coefficient',
-        color='Relationship',
-        text='Coefficient',
-        hover_data=[
-            'P_Value',
-            'Significance'
-        ],
+        'Std Error':
+            model.bse.drop('const').values,
 
-        title='Regression Coefficients'
+        'T-Statistic':
+            model.tvalues.drop('const').values,
 
-    )
+        'P-Value':
+            model.pvalues.drop('const').values,
 
-    coefficient_fig.update_traces(
-        texttemplate='%{text:.3f}',
-        textposition='outside'
-    )
+        'Relationship':
+            [
+                'Positive'
+                if c > 0 else 'Negative'
+                for c in model.params.drop('const').values
+            ]
+    })
 
-    coefficient_fig.update_layout(
-        template='plotly_white',
-        height=600,
-        yaxis_title='Coefficient Value',
-        xaxis_title='Explanatory Variables'
-    )
+    st.markdown("""
+    <div class="regression-table-title">
+    📋 Regression Results Table
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.plotly_chart(
-        coefficient_fig,
+    st.dataframe(
+        regression_table.style.format({
+
+            'Coefficient': '{:.3f}',
+            'Std Error': '{:.3f}',
+            'T-Statistic': '{:.3f}',
+            'P-Value': '{:.4f}'
+
+        }),
         use_container_width=True
     )
 
-    # MODEL SUMMARY
-
-    st.markdown("""
-    ## 🧠 Regression Interpretation
-    """)
+    # MODEL PERFORMANCE
 
     r_squared = model.rsquared
 
     st.markdown(f"""
-    <div class="interpret-box">
-    <h4 class="section-title">📌 Overall Model Performance</h4>
+    <div class="insight-box">
 
-    <b>R² = {r_squared:.3f}</b>
+    <h4>🧠 Overall Model Performance</h4>
+
+    The regression model achieved an
+    <b>R² value of {r_squared:.3f}</b>.
 
     <br><br>
 
-    This means the regression model explains approximately
+    This indicates that approximately
     <b>{r_squared*100:.1f}%</b>
-    of the variation in tertiary school enrollment.
+    of the variation in tertiary enrollment
+    can be explained by the socio-economic variables included in the model.
 
-    <br><br>
-
-    The model demonstrates a
-    <b>moderately strong explanatory relationship</b>
-    between the selected socio-economic variables and tertiary enrollment.
     </div>
     """, unsafe_allow_html=True)
 
     # VARIABLE INTERPRETATION
 
     st.markdown("""
-    ## 📘 Variable-by-Variable Interpretation
+    ## 📘 Interpretation of Variables
     """)
 
-    for _, row in coefficient_df.iterrows():
-        variable = row['Variable']
+    for _, row in regression_table.iterrows():
+
+        variable = row['Explanatory Variable']
         coef = row['Coefficient']
-        pval = row['P_Value']
-        sig = row['Significance']
+        pval = row['P-Value']
         relation = row['Relationship']
 
-        strength = abs(coef)
+        strength = (
+            "strong"
+            if abs(coef) >= 1 else
+            "moderate"
+            if abs(coef) >= 0.3 else
+            "weak"
+        )
 
-        if strength >= 1:
-            impact = "strong"
-
-        elif strength >= 0.3:
-            impact = "moderate"
-
-        else:
-            impact = "weak"
-
-        significance_text = (
-            "statistically reliable"
+        significance = (
+            "statistically significant"
             if pval < 0.05
-            else "not statistically reliable"
+            else "not statistically significant"
         )
 
         st.markdown(f"""
         <div class="interpret-box">
-        <h4 class="section-title">{variable}</h4>
-        <b>Relationship:</b> {relation}<br>
-        <b>Coefficient:</b> {coef:.3f}<br>
-        <b>Statistical Significance:</b> {sig}<br>
-        <b>P-Value:</b> {pval:.4f}<br><br>
 
-        Interpretation:
+        <h4>{variable}</h4>
 
-        A one-unit increase in <b>{variable}</b>
+        A one-unit increase in
+        <b>{variable}</b>
         is associated with an estimated
         <b>{abs(coef):.3f}</b> point
         {"increase" if coef > 0 else "decrease"}
-        in tertiary enrollment.
+        in tertiary enrollment for <b>{selected_year}</b>.
 
         <br><br>
 
-        This indicates a
-        <b>{impact} {relation.lower()} relationship</b>
-        with tertiary enrollment.
-
-        <br><br>
-
-        The relationship is
-        <b>{significance_text}</b>.
+        The variable demonstrates a
+        <b>{strength} {relation.lower()} relationship</b>
+        with tertiary enrollment and is
+        <b>{significance}</b>
+        at conventional statistical levels.
 
         </div>
         """, unsafe_allow_html=True)
 
-    # KEY FINDINGS
-
-    st.markdown("""
-    ## 🔍 Key Findings Summary
-    """)
-
-    findings = []
-
-    for _, row in coefficient_df.iterrows():
-        if row['P_Value'] < 0.05:
-            findings.append(
-                f"✅ {row['Variable']} shows a statistically significant "
-                f"{row['Relationship'].lower()} relationship "
-                f"with tertiary enrollment."
-            )
-
-    if findings:
-        for finding in findings:
-            st.success(finding)
-    else:
-        st.warning(
-            "No variables were statistically significant at p < 0.05."
-        )
+    # FULL OLS SUMMARY
 
     with st.expander(
-        "View Full Statistical OLS Summary"
+        "View Full OLS Statistical Summary"
     ):
         st.text(model.summary())
 
 else:
+
     st.warning(
         "Insufficient data for regression analysis."
     )
